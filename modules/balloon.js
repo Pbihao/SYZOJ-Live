@@ -21,9 +21,20 @@ const displayConfig = {
 
 app.get('/balloons', async (req, res) => {
   try {
-    let query = JudgeState.createQueryBuilder("mt");
+
+    const curUser = res.locals.user;
+
 
     const contestId = Number(req.query.contest);
+    const contest = await Contest.findById(contestId);
+    contest.ended = contest.isEnded();
+    if (!(curUser && await contest.isWatcher(curUser))) {
+      throw new Error("您暂时无权查看此比赛的气球榜单信息。");
+    }
+
+
+    let query = JudgeState.createQueryBuilder("mt");
+
     query.andWhere('type = 1');
     query.andWhere('type_info = :type_info', { type_info: contestId });
     query.andWhere('isnull(balloon_checked) or balloon_checked!=:checked', {checked:1});
