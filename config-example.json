@@ -61,7 +61,7 @@
     "judge_state": 10,
     "ranklist_index": 20,
     "ranklist": 50,
-    "discussion": 10,
+    "question": 10,
     "article_comment": 10,
     "contest": 10,
     "edit_contest_problem_list": 10,

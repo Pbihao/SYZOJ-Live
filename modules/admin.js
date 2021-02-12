@@ -58,7 +58,7 @@ let configItems = {
   'page.judge_state': { name: '提交记录', type: Number },
   'page.problem_statistics': { name: '题目统计', type: Number },
   'page.ranklist': { name: '排行榜', type: Number },
-  'page.discussion': { name: '讨论', type: Number },
+  'page.question': { name: '讨论', type: Number },
   'page.article_comment': { name: '评论', type: Number },
   'page.contest': { name: '比赛', type: Number }
 };
