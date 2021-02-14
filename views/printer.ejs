@@ -1,0 +1,32 @@
+<% this.title = '打印' %>
+<% include header %>
+<div class="padding">
+    <% if (user) {%>
+        <% if (user.is_admin || user.nickname === "watcher" || user.nickname === "printer") {%>
+            管理员
+        <%} else {%>
+            <form class="" method="post">
+                <div class="ui form">
+                    <div class="field">
+                        <label style="font-size: 20px;">提交打印：</label>
+                        <textarea rows="30" spellcheck="false" id="print_content" name="print_content" style="margin-top: 20px;"> </textarea>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 20px;">
+                    <button id="submit_button" type="submit" class="ui labeled submit icon button">
+                        <i class="icon edit"></i> 提交
+                    </button>
+                </div>
+            </form>
+        <%}%>
+    <% } else { %>
+        <div class="ui placeholder segment">
+            <div class="ui icon header">
+                <i class="print icon"></i>
+                打印前请先登录
+            </div>
+        </div>
+    <%}%>
+</div>
+<% include footer %>
