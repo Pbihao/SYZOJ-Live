@@ -3,7 +3,77 @@
 <div class="padding">
     <% if (user) {%>
         <% if (user.is_admin || user.nickname === "watcher" || user.nickname === "printer") {%>
-            管理员
+            <div class="ui grid">
+                <div class="row">
+                    <div class="ten wide column">
+                        <div class="ui breadcrumb">
+                            <div class="section">打印请求</div>
+                            <i class="right angle icon divider"></i>
+                            <% if (in_checked) { %>
+                                <div class="section">已处理请求</div>
+                            <% } else { %>
+                                <div class="section">未处理请求</div>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="six wide right aligned column" style="margin-bottom: 10px; ">
+                        <% if (in_checked) { %>
+                            <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['printer', 'unchecked']) %>" class="ui labeled icon mini blue button">
+                                <i class="print icon"></i>
+                                未处理请求
+                            </a>
+                        <% } else { %>
+                            <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['printer', 'checked']) %>" class="ui labeled icon mini blue button">
+                                <i class="file outline icon"></i>
+                                已处理请求
+                            </a>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+
+            <% if (printers.length) { %>
+
+            <table class="ui very basic center aligned table">
+                <thead>
+                <tr>
+                    <th style="width: 20%; ">标号</th>
+                    <th style="width: 20%; ">提交者</th>
+                    <th style="width: 15%; ">是否已处理</th>
+                    <th style="width: 25%; ">提交时间</th>
+                    <th style="width: 20%; ">打印</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% for (let printer of printers) { %>
+                    <tr>
+                        <td><%= printer.id %></td>
+                        <td><%= printer.user_name %></td>
+                        <td>
+                            <% if (printer.is_printed) {%>
+                                已处理
+                            <%}else{%>
+                                未处理
+                            <%}%>
+                        </td>
+                        <td><%= syzoj.utils.formatDate(printer.submit_time) %></td>
+                        <td><a href="<%= syzoj.utils.makeUrl(['printer', 'print', printer.id]) %>" class="ui small green button">打印</a></td>
+                    </tr>
+                <% } %>
+                </tbody>
+            </table>
+            <br>
+
+            <% include page.ejs%>
+            <% } else {%>
+                <div class="ui placeholder segment">
+                    <div class="ui icon header">
+                        <i class="print outl icon" style="margin-bottom: 20px; "></i>
+                        暂无打印请求
+                    </div>
+                </div>
+            <% } %>
+
         <%} else {%>
             <form class="" method="post">
                 <div class="ui form">

@@ -16,6 +16,9 @@ export default class Printer extends Model{
   @TypeORM.Column({ nullable: true, type: "integer"})
   user_id: number;
 
+  @TypeORM.Column({ nullable: true, type: "mediumtext"})
+  user_name: string;
+
   @TypeORM.Column({nullable: true, type: "integer"})
   submit_time: number;
 
