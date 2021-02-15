@@ -1,6 +1,8 @@
 let Printer = syzoj.model('printer')
 let User = syzoj.model('user');
 
+
+
 app.get('/printer/:type?', async (req, res) => {
   try {
     let user = res.locals.user
@@ -41,6 +43,33 @@ app.get('/printer/:type?', async (req, res) => {
     });
   }
 });
+
+app.get('/printer/print/:id', async (req, res) => {
+  try{
+    let user = res.locals.user
+
+    if(!(user && (user.is_admin || user.nickname === 'watcher' || user.nickname === 'printer'))){
+      throw new ErrorMessage("你无权查看此界面")
+    }
+
+    let printer = await Printer.findById(req.params.id)
+    if (!printer){
+      throw new ErrorMessage("未找到此打印请求")
+    }
+
+
+    res.render('printer_show', {
+      printer: printer,
+      print_id: req.params.id
+    })
+  } catch (e) {
+    syzoj.log(e)
+    res.render('error', {
+      err: e
+    })
+  }
+})
+
 app.get('/printer_success', async (req, res) => {
   try {
     res.render('printer_success', {
@@ -53,6 +82,32 @@ app.get('/printer_success', async (req, res) => {
     });
   }
 });
+
+app.get("/printer/mark/:id", async (req, res) => {
+  try {
+    let user = res.locals.user
+
+    if(!(user && (user.is_admin || user.nickname === 'watcher' || user.nickname === 'printer'))){
+      throw new ErrorMessage("你无权查看此界面")
+    }
+
+    let printer = await Printer.findById(req.params.id)
+    if (!printer){
+      throw new ErrorMessage("未找到此打印请求")
+    }
+
+    printer.is_printed = true;
+
+    await printer.save();
+    res.redirect(syzoj.utils.makeUrl("printer", "unchecked"))
+
+  } catch (e) {
+    syzoj.log(e)
+    res.render('error', {
+      err: e
+    })
+  }
+})
 
 app.post('/printer', async (req, res) => {
   try {

@@ -51,9 +51,9 @@
                         <td><%= printer.user_name %></td>
                         <td>
                             <% if (printer.is_printed) {%>
-                                已处理
+                                <div class="ui mini blue label">已处理</div>
                             <%}else{%>
-                                未处理
+                                <div class="ui mini red label">未处理</div>
                             <%}%>
                         </td>
                         <td><%= syzoj.utils.formatDate(printer.submit_time) %></td>
@@ -79,7 +79,7 @@
                 <div class="ui form">
                     <div class="field">
                         <label style="font-size: 20px;">提交打印：</label>
-                        <textarea rows="30" spellcheck="false" id="print_content" name="print_content" style="margin-top: 20px;"> </textarea>
+                        <textarea rows="30" spellcheck="false" id="print_content" name="print_content" style="margin-top: 20px; line-height: 1.5;"> </textarea>
                     </div>
                 </div>
 
