@@ -85,6 +85,11 @@ export default class User extends Model {
     return user && (user.is_admin || this.id === user.id);
   }
 
+  async isAllowedPrint(user) {
+    if (!user) return false;
+    return user && (user.is_admin || user.nickname === "watcher" || user.nickname === "printer");
+  }
+
   getQueryBuilderForACProblems() {
     return JudgeState.createQueryBuilder()
                      .select(`DISTINCT(problem_id)`)

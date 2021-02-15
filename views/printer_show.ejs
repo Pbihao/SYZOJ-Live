@@ -1,0 +1,68 @@
+<% this.title = '打印预览' %>
+<% include header.ejs%>
+
+
+
+
+<div class="padding">
+
+    <div class="ui grid">
+        <div class="row">
+            <div class="ten wide left aligned column">
+                <div class="ui header" style="margin-top: 5px; margin-left: 5px;">
+                    打印预览:
+                </div>
+            </div>
+            <div class="three wide right aligned column" style="margin-bottom: 10px;">
+                <a style="margin-left: 2px; " href="<%= syzoj.utils.makeUrl(['printer', 'unchecked']) %>" class="ui labeled icon mini blue button">
+                    <i class="backward icon"></i>
+                    返回上一层
+                </a>
+            </div>
+            <div class="three wide right aligned column" style="margin-bottom: 10px;">
+                <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['printer', 'mark', print_id]) %>" class="ui labeled icon mini green button">
+                    <i class="marker icon"></i>
+                    标记已处理并返回
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="ui form">
+        <div class="field">
+            <textarea rows="30" spellcheck="false" id="print_content" style="margin-top: 20px;line-height: 1.5;" readonly="readonly">提交者:<%=printer.user_name%>&#10;提交时间:<%=syzoj.utils.formatDate(printer.submit_time)%>&#10;&#10;<%= printer.print_content.trim()%></textarea>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <button id="submit_button" class="ui labeled submit icon button" onclick="printDiv()">
+            <i class="icon print"></i> 打印
+        </button>
+    </div>
+
+
+</div>
+
+<script type="text/javascript" src=<%- lib('print-html-element/dist/print-html-element.js') %>></script>
+<script>
+    var PHE = printHtmlElement;
+    function printDiv(){
+        let printContents = ""
+        printContents += "<div id = \"printDiv\" style=\"width: 21cm;  padding: 1.5cm; font-size:15px; white-space:pre-wrap;line-height: 1.5;\">";
+        printContents += document.getElementById("print_content").innerHTML;
+        printContents += "</div>";
+        let originalContents = document.body.innerHTML;
+        document.body.innerHTML = printContents
+
+        PHE.printElement( document.getElementById('printDiv') );
+
+        setTimeout(()=>{
+            document.body.innerHTML = originalContents
+        }, 1500)
+
+    }
+</script>
+
+
+<% include footer.ejs %>

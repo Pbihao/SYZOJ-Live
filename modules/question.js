@@ -3,10 +3,10 @@ let Article = syzoj.model('article');
 let ArticleComment = syzoj.model('article-comment');
 let User = syzoj.model('user');
 
-app.get('/discussion/:type?', async (req, res) => {
+app.get('/question/:type?', async (req, res) => {
   try {
     if (!['global', 'problems'].includes(req.params.type)) {
-      res.redirect(syzoj.utils.makeUrl(['discussion', 'global']));
+      res.redirect(syzoj.utils.makeUrl(['question', 'global']));
     }
     const in_problems = req.params.type === 'problems';
 
@@ -16,7 +16,7 @@ app.get('/discussion/:type?', async (req, res) => {
     } else {
       where = { problem_id: null };
     }
-    let paginate = syzoj.utils.paginate(await Article.countForPagination(where), req.query.page, syzoj.config.page.discussion);
+    let paginate = syzoj.utils.paginate(await Article.countForPagination(where), req.query.page, syzoj.config.page.question);
     let articles = await Article.queryPage(paginate, where, {
       sort_time: 'DESC'
     });
@@ -28,7 +28,7 @@ app.get('/discussion/:type?', async (req, res) => {
       }
     }
 
-    res.render('discussion', {
+    res.render('question', {
       articles: articles,
       paginate: paginate,
       problem: null,
@@ -42,7 +42,7 @@ app.get('/discussion/:type?', async (req, res) => {
   }
 });
 
-app.get('/discussion/problem/:pid', async (req, res) => {
+app.get('/question/problem/:pid', async (req, res) => {
   try {
     let pid = parseInt(req.params.pid);
     let problem = await Problem.findById(pid);
@@ -52,14 +52,14 @@ app.get('/discussion/problem/:pid', async (req, res) => {
     }
 
     let where = { problem_id: pid };
-    let paginate = syzoj.utils.paginate(await Article.countForPagination(where), req.query.page, syzoj.config.page.discussion);
+    let paginate = syzoj.utils.paginate(await Article.countForPagination(where), req.query.page, syzoj.config.page.question);
     let articles = await Article.queryPage(paginate, where, {
       sort_time: 'DESC'
     });
 
     for (let article of articles) await article.loadRelationships();
 
-    res.render('discussion', {
+    res.render('question', {
       articles: articles,
       paginate: paginate,
       problem: problem,
@@ -207,7 +207,7 @@ app.post('/article/:id/delete', async (req, res) => {
 
     await article.destroy();
 
-    res.redirect(syzoj.utils.makeUrl(['discussion', 'global']));
+    res.redirect(syzoj.utils.makeUrl(['question', 'global']));
   } catch (e) {
     syzoj.log(e);
     res.render('error', {

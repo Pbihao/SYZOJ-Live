@@ -10,6 +10,8 @@ const optionDefinitions = [
   { name: 'config', alias: 'c', type: String, defaultValue: __dirname + '/config.json' },
 ];
 
+
+
 const options = commandLineArgs(optionDefinitions);
 
 require('reflect-metadata');

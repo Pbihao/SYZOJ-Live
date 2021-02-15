@@ -97,7 +97,7 @@ if (contest) {
           <% if (problem.additional_file) { %>
             <a class="small ui teal button" href="<%= syzoj.utils.makeUrl(['problem', problem.id, 'download', 'additional_file']) %>">附加文件</a>
           <% } %>
-          <a class="small ui brown button" href="<%= syzoj.utils.makeUrl(['discussion', 'problem', problem.id]) %>" style="position: relative; ">
+          <a class="small ui brown button" href="<%= syzoj.utils.makeUrl(['question', 'problem', problem.id]) %>" style="position: relative; ">
             讨论
             <% if (discussionCount) { %>
               <div class="floating ui red tiny circular label" style="background-color: #8c5633 !important; top: -0.6em; "><%= discussionCount %></div>
