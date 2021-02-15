@@ -20,8 +20,9 @@ app.get('/printer/:type?', async (req, res) => {
         where = {is_printed: false}
       }
       let paginate = syzoj.utils.paginate(await Printer.countForPagination(where), req.query.page, syzoj.config.page.question)
+
       let printers = await Printer.queryPage(paginate, where, {
-        id: 'ASC'
+        id: in_checked ? "DESC" : 'ASC'
       })
 
       res.render("printer", {
