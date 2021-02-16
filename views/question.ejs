@@ -1,28 +1,33 @@
-<% this.title = '讨论' %>
+<% this.title = '答疑' %>
 <% include header %>
 <div class="padding">
+  <% if (user) {%>
   <div class="ui grid">
     <div class="row">
       <div class="ten wide column">
         <div class="ui breadcrumb">
-          <div class="section">讨论</div>
+          <div class="section">答疑</div>
           <i class="right angle icon divider"></i>
           <% if (problem) { %>
-            <div class="section"><a href="<%= syzoj.utils.makeUrl(['question', 'problems']) %>">题目</a></div>
+            <div class="section">题目</div>
             <i class="right angle icon divider"></i>
             <div class="active section"><%= problem.title %></div>
-          <% } else if (in_problems) { %>
-            <div class="section">题目</div>
+          <% } else if (in_read) { %>
+            <div class="section">已读信息</div>
           <% } else { %>
-            <div class="section">全局板块</div>
+            <%if (syzoj.utils.canWatch(user)){%>
+            <div class="section">未读信息</div>
+            <%} else {%>
+            <div class="section">我的答疑</div>
+            <%}%>
           <% } %>
         </div>
       </div>
       <div class="six wide right aligned column" style="margin-bottom: 10px; ">
-        <% if (in_problems) { %>
+        <% if (in_read) { %>
           <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['question', 'global']) %>" class="ui labeled icon mini blue button">
-            <i class="world icon"></i>
-            全局板块
+            <i class="file outline icon"></i>
+            未读信息
           </a>
         <% } else { %>
           <% if (problem) { %>
@@ -30,10 +35,10 @@
               <i class="arrow left icon"></i>
               返回题目
             </a>
-          <% } else { %>
-            <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['question', 'problems']) %>" class="ui labeled icon mini blue button">
+          <% } else if (syzoj.utils.canWatch(user)){ %>
+            <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['question', 'read']) %>" class="ui labeled icon mini blue button">
               <i class="file outline icon"></i>
-              题目板块
+              已读信息
             </a>
           <% } %>
           <% if (articles.length && user) { %>
@@ -51,9 +56,6 @@
     <thead>
       <tr>
         <th class="left aligned" style="width: 45%; ">标题</th>
-        <% if (in_problems) { %>
-          <th style="width: 20%; ">所属题目</th>
-        <% } %>
         <th style="width: 10%; ">作者</th>
         <th style="width: 10%; ">回复数</th>
         <th style="width: 15%; ">最新回复</th>
@@ -62,10 +64,7 @@
     <tbody>
     <% for (let article of articles) { %>
         <tr>
-            <td class="left aligned"><a href="<%= syzoj.utils.makeUrl(['article', article.id]) %>"><%= article.title %></a></td>
-            <% if (in_problems) { %>
-              <td><a href="<%= syzoj.utils.makeUrl(['question', 'problem', article.problem_id]) %>"><%= article.problem.title %></a></td>
-            <% } %>
+          <td class="left aligned"><a href="<%= syzoj.utils.makeUrl(['article', article.id]) %>"><%= article.title %> <%if (article.new_reply){%><span class="ui header"> <div class="ui mini red label">有新回复</div> </span><%}%></a></td>
             <td><a href="<%= syzoj.utils.makeUrl(['user', article.user_id]) %>"><%= article.user.username %></a><% if (article.user.nameplate) { %><%- article.user.nameplate %><% } %></td>
             <td><%= article.comments_num %></td>
             <td><%= syzoj.utils.formatDate(article.sort_time) %></td>
@@ -78,10 +77,10 @@
   <% } else { %>
   <div class="ui placeholder segment">
     <div class="ui icon header">
-      <i class="chat icon" style="margin-bottom: 20px; "></i>
-      暂无讨论
+      <i class="comments icon" style="margin-bottom: 20px; "></i>
+      暂无答疑
     </div>
-    <% if (!in_problems && user) { %>
+    <% if (!in_read && user) { %>
     <a href="<%= syzoj.utils.makeUrl(['article', 0, 'edit'], problem ? { problem_id: problem.id } : null) %>" class="ui primary labeled icon button">
       <i class="write icon"></i>
       发帖
@@ -89,5 +88,27 @@
     <% } %>
   </div>
   <% } %>
+  <%} else {%>
+    <div class="ui placeholder segment">
+      <div class="ui icon header">
+        <i class="comments icon"></i>
+        答疑前请先登录
+      </div>
+    </div>
+  <%}%>
 </div>
+<script>
+
+  $(function (){
+    window.addEventListener( "pageshow", function ( event ) {
+      var historyTraversal = event.persisted ||
+              ( typeof window.performance != "undefined" &&
+                      window.performance.navigation.type === 2 );
+      if ( historyTraversal ) {
+        // Handle page restore.
+        window.location.reload();
+      }
+    });
+  })
+</script>
 <% include footer %>

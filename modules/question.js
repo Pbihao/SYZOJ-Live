@@ -5,34 +5,82 @@ let User = syzoj.model('user');
 
 app.get('/question/:type?', async (req, res) => {
   try {
-    if (!['global', 'problems'].includes(req.params.type)) {
+    if (!['global', 'read'].includes(req.params.type)) {
       res.redirect(syzoj.utils.makeUrl(['question', 'global']));
+      return
     }
-    const in_problems = req.params.type === 'problems';
+    const in_read = req.params.type === 'read';
+    let user = res.locals.user;
 
+    if(!user){
+      res.render("question", {
+        articles: null,
+        paginate: null,
+        problem: null,
+        in_read: in_read
+      })
+      return
+    }
+
+    let articles = null;
+    let paginate = null;
     let where;
-    if (in_problems) {
-      where = { problem_id: TypeORM.Not(TypeORM.IsNull()) };
-    } else {
-      where = { problem_id: null };
-    }
-    let paginate = syzoj.utils.paginate(await Article.countForPagination(where), req.query.page, syzoj.config.page.question);
-    let articles = await Article.queryPage(paginate, where, {
-      sort_time: 'DESC'
-    });
+    //如果是观察员（包括管理员和观察员）则返回的未读的信息或者已读的信息
+    if(syzoj.utils.canWatch(res.locals.user)){
+      if(in_read){
+        where = {
+          competitor_edited: false
+        }
+        paginate = syzoj.utils.paginate(await Article.countForPagination(where), req.query.page, syzoj.config.page.question);
+        articles = await Article.queryPage(paginate, where, {
+          sort_time: 'DESC'
+        });
+      }else {
+        where = {
+          competitor_edited: true
+        }
+        paginate = syzoj.utils.paginate(await Article.countForPagination(where), req.query.page, syzoj.config.page.question);
+        articles = await Article.queryPage(paginate, where, {
+          sort_time: 'ASC'
+        });
+      }
 
-    for (let article of articles) {
-      await article.loadRelationships();
-      if (in_problems) {
-        article.problem = await Problem.findById(article.problem_id);
+      for (let article of articles) {
+        await article.loadRelationships();
+        if (article.competitor_edited)article.new_reply = true;
+        else article.new_reply = false
       }
     }
+    //如果不是观察者
+    else{
+      if (in_read){
+        throw new ErrorMessage("You are not allowed to watch this page.")
+      }else{
+        where = {
+          problem_id: null,
+          user_id: user.id
+        }
+        paginate = syzoj.utils.paginate(await Article.countForPagination(where), req.query.page, syzoj.config.page.question);
+        articles = await Article.queryPage(paginate, where, {
+          sort_time: 'DESC'
+        });
+
+        for (let article of articles) {
+          await article.loadRelationships();
+          if (article.watcher_edited)article.new_reply = true;
+          else article.new_reply = false
+        }
+      }
+    }
+
+
+
 
     res.render('question', {
       articles: articles,
       paginate: paginate,
       problem: null,
-      in_problems: in_problems
+      in_read: in_read
     });
   } catch (e) {
     syzoj.log(e);
@@ -63,7 +111,7 @@ app.get('/question/problem/:pid', async (req, res) => {
       articles: articles,
       paginate: paginate,
       problem: problem,
-      in_problems: false
+      in_read: false
     });
   } catch (e) {
     syzoj.log(e);
@@ -78,6 +126,16 @@ app.get('/article/:id', async (req, res) => {
     let id = parseInt(req.params.id);
     let article = await Article.findById(id);
     if (!article) throw new ErrorMessage('无此帖子。');
+
+    //清除未读标记
+    if (res.locals.user && syzoj.utils.canWatch(res.locals.user) && article.competitor_edited === true){
+      article.competitor_edited = false;
+      await article.save()
+    }else if(res.locals.user && article.watcher_edited === true && res.locals.user.id === article.user_id){
+      article.watcher_edited = false;
+      await  article.save()
+    }
+
 
     await article.loadRelationships();
     article.allowedEdit = await article.isAllowedEditBy(res.locals.user);
@@ -105,6 +163,8 @@ app.get('/article/:id', async (req, res) => {
         throw new ErrorMessage('您没有权限进行此操作。');
       }
     }
+
+
 
     res.render('article', {
       article: article,
@@ -177,6 +237,12 @@ app.post('/article/:id/edit', async (req, res) => {
     article.update_time = time;
     article.is_notice = (res.locals.user && res.locals.user.is_admin ? req.body.is_notice === 'on' : article.is_notice);
 
+    if(!syzoj.utils.canWatch(res.locals.user)){
+      article.competitor_edited = true
+    }else{
+      article.watcher_edited = true
+    }
+
     await article.save();
 
     res.redirect(syzoj.utils.makeUrl(['article', article.id]));
@@ -239,6 +305,15 @@ app.post('/article/:id/comment', async (req, res) => {
     await comment.save();
 
     await article.resetReplyCountAndTime();
+
+    //确定是否修改
+    if(syzoj.utils.canWatch(res.locals.user)){
+      article.watcher_edited = true;
+      await article.save()
+    }else{
+      article.competitor_edited = true;
+      await article.save()
+    }
 
     res.redirect(syzoj.utils.makeUrl(['article', article.id]));
   } catch (e) {
