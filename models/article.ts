@@ -48,8 +48,15 @@ export default class Article extends Model {
   @TypeORM.Column({ nullable: true, type: "boolean" })
   is_notice: boolean;
 
+  @TypeORM.Column({default: false, type: "boolean"})
+  watcher_edited: boolean;
+
+  @TypeORM.Column({default: false, type: "boolean"})
+  competitor_edited: boolean;
+
   user?: User;
   problem?: Problem;
+  new_reply?: Boolean;
 
   async loadRelationships() {
     this.user = await User.findById(this.user_id);

@@ -318,6 +318,9 @@ module.exports = {
       attempt();
     });
   },
+  canWatch(user){
+    return user && (user.is_admin || user.nickname === "watcher")
+  },
   getCurrentLocation(req, hostOnly) {
     const currentProto = req.get("X-Forwarded-Proto") || req.protocol,
           host = currentProto + '://' + req.get('host');

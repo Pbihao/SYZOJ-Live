@@ -7,14 +7,14 @@
 </style>
 <div class="padding">
   <div class="ui breadcrumb">
-    <div class="section">讨论</div>
+    <div class="section">答疑</div>
     <i class="right angle icon divider"></i>
     <% if (problem) { %>
       <div class="section"><a href="<%= syzoj.utils.makeUrl(['question', 'problems']) %>">题目</a></div>
       <i class="right angle icon divider"></i>
       <a href="<%= syzoj.utils.makeUrl(['question', 'problem', problem.id]) %>" class="active section"><%= problem.title %></a>
     <% } else { %>
-      <a href="<%= syzoj.utils.makeUrl(['question', 'global']) %>" class="section">全局板块</a>
+      <a href="<%= syzoj.utils.makeUrl(['question', 'global']) %>" class="section">首页</a>
     <% } %>
   </div>
   <h1><%= article.title %></h1>
