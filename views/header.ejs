@@ -72,6 +72,7 @@
             <%if (syzoj.config.use_print){%>
             <a class="item<% if (active.startsWith('printer')) { %> active<% } %>" href="/printer"><i class="print icon"></i>打印</a>
             <%}%>
+            <a class="item<% if (active.startsWith('download')) { %> active<% } %>" href="/download"><i class="download icon"></i>下载</a>
 
             <a class="item<% if (active.startsWith('help')) { %> active<% } %>" href="/help"><i class="help circle icon"></i> 帮助</a>
             <% if (typeof contest !== 'undefined' && contest && contest.id) { %>
