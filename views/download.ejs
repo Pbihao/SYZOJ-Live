@@ -60,10 +60,29 @@ function getIcon(filename) {
                             <td class="left aligned"><i class="<%= getIcon(file.filename)%> icon"></i> <%= file.filename%> </td>
                             <td><%= syzoj.utils.formatSize(file.size)%></td>
                             <td>
-                                <a style="color: #000; " href="<%= syzoj.utils.makeUrl(['download', "download", file.filename])%>">
+                                <a style="color: #000; cursor: pointer;" onclick="$('#modal-download-<%= i%>').modal('show')">
                                     <i class="download icon"></i>
                                 </a>
                             </td>
+                            <div class="ui basic modal" id="modal-download-<%= i%>">
+                                <div class="ui icon header">
+                                    <i class="download icon"></i>
+                                    <p style="margin-top: 15px;">下载文件</p>
+                                </div>
+                                <div class="constant" style="text-align: center;">
+                                    <p>确认下载 「 <samp><%= file.filename %></samp> 」吗？</p>
+                                </div>
+                                <div class="actions">
+                                    <div class="ui red basic cancel inverted button">
+                                        <i class="remove icon"></i>
+                                        否
+                                    </div>
+                                    <a class="ui green ok inverted button" href="<%-syzoj.utils.makeUrl(['download', "download", file.filename])%>">
+                                        <i class="checkmark icon"></i>
+                                        是
+                                    </a>
+                                </div>
+                            </div>
                             <% if (syzoj.utils.canWatch(user)){%>
                                 <td>
                                     <a style="color: #000; cursor: pointer;" onclick="$('#modal-delete-<%=i%>').modal('show')" >
