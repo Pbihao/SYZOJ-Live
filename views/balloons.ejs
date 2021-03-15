@@ -4,8 +4,38 @@
 <script src="<%- lib('textfit/2.3.1/textFit.min.js') %>"></script>
 <div class="padding">
 
+
+    <div class="ui grid">
+        <div class="row">
+            <div class="ten wide column">
+                <div class="ui breadcrumb">
+                    <div class="section">气球榜单</div>
+                    <i class="right angle icon divider"></i>
+                    <% if (in_read) { %>
+                        <div class="section">已处理</div>
+                    <% } else { %>
+                        <div class="section">未处理</div>
+                    <% } %>
+                </div>
+            </div>
+            <div class="six wide right aligned column" style="margin-bottom: 10px; ">
+                <% if (in_read) { %>
+                    <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['balloons'], {contest:contestId}) %>" class="ui labeled icon mini blue button">
+                        <i class="file outline icon"></i>
+                        未处理气球
+                    </a>
+                <% } else { %>
+                    <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['balloons', 'read'], {contest: contestId}) %>" class="ui labeled icon mini blue button">
+                        <i class="file outline icon"></i>
+                        已处理气球
+                    </a>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
     <div id="vueAppBallons">
-    <table class="ui very basic center aligned table" style="white-space: nowrap; " id="table">
+    <table class="ui very basic center aligned table" style="white-space: nowrap; margin-top: 20px;" id="table">
         <thead>
         <tr>
             <th>编号</th>
@@ -51,7 +81,11 @@
         <div class="ui placeholder segment" style="margin-top: -5px; ">
             <div class="ui icon header">
                 <i class="ui file icon" style="margin-bottom: 20px; "></i>
-                暂无气球需要分发
+                <% if (in_read) { %>
+                    暂无已分发气球
+                <%} else {%>
+                    暂无气球需要分发
+                <% } %>
             </div>
         </div>
     <% } else { %>

@@ -62,7 +62,9 @@
         <td>{{ data.info.submitTime }}</td>
 
         <td v-if="!data.info.balloon_checked">
-            <b id="balloon-confirm-button" :onclick="'check_distribute('+data.info.submissionId+')'" style="color: #000; cursor: pointer;"><i class="check icon"></i></b>
+            <b id="balloon-confirm-button" :onclick="'check_distribute('+data.info.submissionId+')'" style="color: #000; cursor: pointer;">
+                <div class="ui small green button">确认</div>
+            </b>
         </td>
     </tr>
 </script>
