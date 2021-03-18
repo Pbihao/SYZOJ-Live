@@ -45,7 +45,7 @@ function show_error(error) {
     $("#error").show();
 }
 function success(session_id) {
-    window.location.href = location.protocol + '//' + location.host + <%- serializejs(req.query.url || '/') %>;
+    window.location.href = location.protocol + '//' + location.host + '/help';
 }
 function login() {
     password = md5($("#password").val() + "syzoj2_xxx");
