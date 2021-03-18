@@ -44,7 +44,11 @@
           <% if (articles.length && user) { %>
           <a style="margin-left: 10px; " href="<%= syzoj.utils.makeUrl(['article', 0, 'edit'], problem ? { problem_id: problem.id } : null) %>" class="ui labeled icon mini button">
               <i class="write icon"></i>
-              发帖
+              <%if(syzoj.utils.canWatch(user)){%>
+                发帖
+              <%} else {%>
+                提问
+              <%}%>
           </a>
           <% } %>
         <% } %>
@@ -83,7 +87,11 @@
     <% if (!in_read && user) { %>
     <a href="<%= syzoj.utils.makeUrl(['article', 0, 'edit'], problem ? { problem_id: problem.id } : null) %>" class="ui primary labeled icon button">
       <i class="write icon"></i>
-      发帖
+      <%if (syzoj.utils.canWatch(user)){%>
+       发帖
+      <%} else {%>
+       提问
+      <%}%>
     </a>
     <% } %>
   </div>
