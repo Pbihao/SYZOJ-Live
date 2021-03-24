@@ -127,6 +127,20 @@ app.get('/article/:id', async (req, res) => {
     let article = await Article.findById(id);
     if (!article) throw new ErrorMessage('无此帖子。');
 
+
+    //公告所有人无论等不登录都可以查看，所以只用过滤非公告的答疑
+    if (!article.is_notice){
+      // 如果没有登录， 不允许查看答疑
+      if(!res.locals.user){
+        throw new ErrorMessage("你无权查看此界面。");
+      }else {
+        // 登录以后，如果是裁判可以查看任何消息，否则只能查看自己的答疑
+        if(!syzoj.utils.canWatch(res.locals.user) && article.user_id !== res.locals.user.id){
+          throw new ErrorMessage("你无权查看此界面。");
+        }
+      }
+    }
+
     //清除未读标记
     if (res.locals.user && syzoj.utils.canWatch(res.locals.user) && article.competitor_edited === true){
       article.competitor_edited = false;
@@ -171,7 +185,8 @@ app.get('/article/:id', async (req, res) => {
       comments: comments,
       paginate: paginate,
       problem: problem,
-      commentsCount: commentsCount
+      commentsCount: commentsCount,
+      is_notice: article.is_notice
     });
   } catch (e) {
     syzoj.log(e);

@@ -7,6 +7,8 @@
 </style>
 <div class="padding">
   <div class="ui breadcrumb">
+<!--    如果不是公告的话-->
+    <% if(typeof is_notice === 'undefined' || !is_notice){ %>
     <div class="section">答疑</div>
     <i class="right angle icon divider"></i>
     <% if (problem) { %>
@@ -15,6 +17,12 @@
       <a href="<%= syzoj.utils.makeUrl(['question', 'problem', problem.id]) %>" class="active section"><%= problem.title %></a>
     <% } else { %>
       <a href="<%= syzoj.utils.makeUrl(['question', 'global']) %>" class="section">首页</a>
+    <% } %>
+
+    <% } else { %>
+      <div class="section">公告</div>
+      <i class="right angle icon divider"></i>
+      <a href="<%= syzoj.utils.makeUrl(['']) %>" class="section">首页</a>
     <% } %>
   </div>
   <h1><%= article.title %></h1>

@@ -58,7 +58,7 @@
             <% } else { %>
             <a class="header item" href="/"><span style="font-family: 'Exo 2'; font-size: 1.5em; font-weight: 600; "><%= syzoj.config.title %></span></a>
             <% } %>
-            <a class="item<% if (active === '') { %> active<% } %>" href="/"><i class="home icon"></i> 公告</a>
+            <a class="item<% if (active === '' || (typeof is_notice !== 'undefined' && is_notice)) { %> active<% } %>" href="/"><i class="home icon"></i> 公告</a>
 
             <% if (user && user.is_admin){ %>
             <a class="item<% if (active.startsWith('problem')) { %> active<% } %>" href="/problems"><i class="list icon"></i> 题库</a>
@@ -67,7 +67,7 @@
             <a class="item<% if (active.startsWith('contest')) { %> active<% } %>" href="/contests"><i class="calendar icon"></i> 比赛</a>
 <!--            <a class="item<% if (active.startsWith('submission')) { %> active<% } %>" href="/submissions"><i class="tasks icon"></i> 评测</a>-->
 <!--            <a class="item<% if (active.startsWith('ranklist')) { %> active<% } %>" href="/ranklist"><i class="signal icon"></i> 排名</a>-->
-            <a class="item<% if (active.startsWith('question') || active.startsWith('article')) { %> active<% } %>" href="/question/global"><i class="comments icon"></i> 答疑</a>
+            <a class="item<% if (active.startsWith('question') || (active.startsWith('article') && (typeof is_notice === 'undefined' || !is_notice))) { %> active<% } %>" href="/question/global"><i class="comments icon"></i> 答疑</a>
 
             <%if (syzoj.config.use_print){%>
             <a class="item<% if (active.startsWith('printer')) { %> active<% } %>" href="/printer"><i class="print icon"></i>打印</a>
