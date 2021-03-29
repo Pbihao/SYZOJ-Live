@@ -8,7 +8,15 @@
 }
 </style>
 <div class="padding">
-<h1 class="ui center aligned header" style="margin-bottom: 30px; "><%= contest.title %></h1>
+    <h1 class="ui center aligned header" style="margin-bottom: 30px; "><%= contest.title %></h1>
+    <%if(syzoj.utils.canWatch(user) && contest.type === 'ioi'){%>
+        <div style="text-align: right; margin-right: 40px;">
+            <div style="margin-left: 10px; margin-bottom: 20px;" onclick="print_ioi()" class="ui labeled icon mini blue button">
+                <i class="print icon"></i>
+                打印排行榜
+            </div>
+        </div>
+    <%}%>
         <table class="ui very basic center aligned table">
             <thead>
             <tr>
@@ -26,7 +34,7 @@
                 </th>
                 <% } %>
                 <% if (contest.type === 'noi' || contest.type === 'ioi') { %>
-                  <th>总分</th>
+                    <th>总分</th>
                 <% } %>
             </tr>
             </thead>
@@ -68,7 +76,8 @@
                     if (i === 1 || item.player.score !== lastItem.player.score || item.player.timeSum !== lastItem.player.timeSum) rank = i;
                   }
                 %>
-                <td>
+
+                <td class="rank_num">
                   <% if (rank == 1) { %>
                     <div class="ui yellow ribbon label">
                   <% } else if (rank == 2) { %>
@@ -81,8 +90,10 @@
                   <%= rank %>
                   </div>
                 </td>
-                <td><a href="<%= syzoj.utils.makeUrl(['user', item.user.id]) %>"><%= item.user.username %></a>
-                    <% if (item.user.nameplate) { %>(<%- item.user.nameplate %>)<% } %></td>
+
+                <td class="rank_name">
+                    <div><%= item.user.username %></div><%if(item.user.nameplate){%>(<%-item.user.nameplate%>)<%}%></td>
+
                 <% if (contest.type === 'acm') { %>
                   <td>
                     <span class="score score_<%= parseInt((item.player.score / ranklist[0].player.score * 10) || 0) %>">
@@ -141,15 +152,16 @@
                     </td>
                   <% } %>
                 <% } %>
+
                 <% if (contest.type === 'noi' || contest.type === 'ioi') { %>
-                  <td>
-                    <span class="score score_<%= parseInt((item.player.score / ranklist[0].player.score * 10) || 0) %>">
-                      <%= item.player.score %>
-                    </span>
-                    <div class="submit_time">
-                      <%= syzoj.utils.formatTime(latest - contest.start_time) %>
-                    </div>
-                  </td>
+                    <td class="rank_score">
+                <span class="score score_<%= parseInt((item.player.score / ranklist[0].player.score * 10) || 0) %>">
+                  <%= item.player.score %>
+                </span>
+                        <div class="submit_time">
+                            <%= syzoj.utils.formatTime(latest - contest.start_time) %>
+                        </div>
+                    </td>
                 <% } %>
             </tr>
             <% lastItem = item; %>
@@ -167,3 +179,47 @@
 <% } %>
 </div>
 <% include footer %>
+<script type="text/javascript" src=<%- syzoj.utils.makeUrl(['cdnjs', 'print-html-element/dist/print-html-element.js']); %>></script>
+<script>
+
+    function print_ioi() {
+
+        var Max = prompt("请输入需要打印排名前多少名选手\n留空将打印全部选手")
+        if(Max === null)return;
+        if(Max === "")Max = 9999999;
+
+        Max = parseInt(Max, 10);
+
+        if (isNaN(Max) || Max < 0){
+            alert("请输入正确的数字")
+            return;
+        }
+
+        let PHE = printHtmlElement;
+        let content = document.createElement("div")
+        content.setAttribute("class", "ui grid")
+
+        let head = document.createElement("div")
+        head.setAttribute("class", "row")
+        head.innerHTML = "<span class='four wide right aligned column' >排名</span> <span class='four wide center aligned column'>分数</span> <span class='eight wide left aligned column'>用户名</span>"
+        content.appendChild(head)
+
+        let nums = document.getElementsByClassName("rank_num")
+        let names = document.getElementsByClassName("rank_name")
+        let scores = document.getElementsByClassName("rank_score")
+        for(let i = 0; i < nums.length && i < Max; i++){
+
+            let num = nums[i].getElementsByTagName("div")[0].innerText;
+            let name = names[i].innerText;
+            let score = scores[i].getElementsByTagName("span")[0].innerText;
+            let p = document.createElement("div")
+            p.setAttribute("class", "row")
+            p.setAttribute("style", "margin-top: -10px;")
+            p.innerHTML = `<span class='four wide right aligned column'>${num}</span> <span class='four wide center aligned column'>${score}</span> <span class='eight wide left aligned column'>${name}</span>`
+            content.append(p)
+        }
+
+        PHE.printElement(content);
+
+    }
+</script>
